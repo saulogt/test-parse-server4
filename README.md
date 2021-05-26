@@ -12,6 +12,7 @@ $ mongodb-runner start
 ## Execution:
 - Clone this repo
 - $ npm i
+- Run `node ./tester.js` once to create the collections
 - Run the test with version 3.10.0
     - $ node ./tester.js  
 - Save metrics
@@ -44,4 +45,24 @@ Created 400 myObjects in sequence
 objectsS: 4.174s
 ```
 
+### Question 1
 
+Why these errors only appear in Parse server 4.5?
+They disappear if I reduce the number of parallel accounts creation
+
+```
+error: Uncaught internal server error. {"stack":"Error"}
+error: Uncaught internal server error. {"stack":"Error"}
+error: Uncaught internal server error. {"stack":"Error"}
+error: Uncaught internal server error. {"stack":"Error"}
+[Error]
+[Error]
+[Error]
+[Error]
+[Error]
+[Error]
+```
+
+### Question 2
+
+Why creating objects in parallel now takes longer?
