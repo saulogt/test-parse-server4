@@ -21,6 +21,12 @@ async function createAccounts(n) {
   return accounts;
 }
 
+/**
+ * Creates the object in parallel and awaits all promises
+ * @param n Number of objects to be created
+ * @param a Account
+ * @returns
+ */
 function createObjectsP(n, a) {
   const objcts = Array.apply(null, Array(n)).map(() => {
     const o = mkValidObject();
@@ -30,6 +36,11 @@ function createObjectsP(n, a) {
   return objcts;
 }
 
+/**
+ * Creates the object in sequence
+ * @param n Number of objects to be created
+ * @param a Account
+ */
 async function createObjectsS(n, a) {
   const objcts = Array.apply(null, Array(n)).map(() => {
     const o = mkValidObject();
@@ -42,17 +53,26 @@ async function createObjectsS(n, a) {
   }
 }
 
-let exit = 0;
-go()
-  .catch((e) => {
-    exit = 1;
-    console.error(e);
-  })
-  .then(() => setTimeout(() => process.exit(exit), 1000));
+if (process.argv[2] === 'create') {
+  console.log('Creating collections');
+  create()
+    .catch((e) => {
+      console.error(`Error creating objects`);
+    })
+    .then(() => process.exit());
+} else {
+  let exit = 0;
+  go()
+    .catch((e) => {
+      exit = 1;
+      console.error(e);
+    })
+    .then(() => setTimeout(() => process.exit(exit), 1000));
+}
 
-async function go() {
+async function go(n) {
   const nAccounts = 300;
-  const nObjects = 400;
+  const nObjects = 3000;
 
   console.time('accounts');
   const accounts = await createAccounts(nAccounts);
@@ -71,6 +91,11 @@ async function go() {
   } catch (err) {
     console.error(err);
   }
+}
+
+async function create() {
+  const accounts = await createAccounts(1);
+  await createObjectsS(1, accounts[0]);
 }
 
 function invokeCloudFunction(name, params, sessionToken) {
