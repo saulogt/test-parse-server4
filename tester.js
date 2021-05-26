@@ -72,7 +72,7 @@ if (process.argv[2] === 'create') {
 
 async function go(n) {
   const nAccounts = 300;
-  const nObjects = 3000;
+  const nObjects = 400;
 
   console.time('accounts');
   const accounts = await createAccounts(nAccounts);
