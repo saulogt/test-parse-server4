@@ -1,8 +1,12 @@
-const Parse = require("parse/node");
-const server = require("./server");
-const uuid = require("uuid").v1;
+const Parse = require('parse/node');
+const server = require('./server');
+const uuid = require('uuid').v1;
 
-const MyClass = Parse.Object.extend("MyClass");
+server.app.listen(1337, function() {
+  console.log('parse-server-example running on port 1337.');
+});
+
+const MyClass = Parse.Object.extend('MyClass');
 
 Parse.initialize(server.appId, null, server.masterKey);
 Parse.serverURL = server.serverURL;
@@ -12,7 +16,7 @@ async function createAccounts(n) {
     Array.apply(null, Array(n)).map(() => {
       const username = uuid();
       return userCreateWithAccount();
-    })
+    }),
   );
   return accounts;
 }
@@ -20,7 +24,7 @@ async function createAccounts(n) {
 function createObjectsP(n, a) {
   const objcts = Array.apply(null, Array(n)).map(() => {
     const o = mkValidObject();
-    o.set("account", a.user.account);
+    o.set('account', a.user.account);
     return o.save(null, { sessionToken: a.user.getSessionToken() });
   });
   return objcts;
@@ -29,7 +33,7 @@ function createObjectsP(n, a) {
 async function createObjectsS(n, a) {
   const objcts = Array.apply(null, Array(n)).map(() => {
     const o = mkValidObject();
-    o.set("account", a.user.account);
+    o.set('account', a.user.account);
     return o;
   });
 
@@ -38,20 +42,26 @@ async function createObjectsS(n, a) {
   }
 }
 
-go();
+let exit = 0;
+go()
+  .catch((e) => {
+    exit = 1;
+    console.error(e);
+  })
+  .then(() => setTimeout(() => process.exit(exit), 1000));
 
 async function go() {
-  console.time("accounts");
-  const accounts = await createAccounts(150);
-  console.timeEnd("accounts");
+  console.time('accounts');
+  const accounts = await createAccounts(300);
+  console.timeEnd('accounts');
   try {
-    console.time("objectsP");
+    console.time('objectsP');
     await Promise.all(createObjectsP(300, accounts[0]));
-    console.timeEnd("objectsP");
+    console.timeEnd('objectsP');
 
-    console.time("objectsS");
+    console.time('objectsS');
     await createObjectsS(300, accounts[0]);
-    console.timeEnd("objectsS");
+    console.timeEnd('objectsS');
   } catch (err) {
     console.error(err);
   }
@@ -70,14 +80,8 @@ function invokeCloudFunction(name, params, sessionToken) {
       .catch((err) => {
         // Don't expose Parse.Error, it doesn't inherit from Error, rollbar does not like
         if (err instanceof Parse.Error)
-          err = new Error(
-            `Error running cloud function ${name}: ${err.code}, ${err.message}`
-          );
-        else
-          err = new NestedError(
-            `Error running cloud function ${name}: ${err.message}`,
-            err
-          );
+          err = new Error(`Error running cloud function ${name}: ${err.code}, ${err.message}`);
+        else err = new NestedError(`Error running cloud function ${name}: ${err.message}`, err);
         reject(err);
       });
   });
@@ -86,15 +90,15 @@ function invokeCloudFunction(name, params, sessionToken) {
 function userCreateWithAccount() {
   const username = uuid();
   const password = uuid();
-  return invokeCloudFunction("userCreateWithAccount", {
+  return invokeCloudFunction('userCreateWithAccount', {
     user: {
       username,
       password,
     },
     install: {
-      device: "foo",
-      appIdentifier: "my.coolapp",
-      localeIdentifier: "en-US",
+      device: 'foo',
+      appIdentifier: 'my.coolapp',
+      localeIdentifier: 'en-US',
     },
   })
     .then(function(result) {
@@ -109,11 +113,11 @@ function userCreateWithAccount() {
 function mkValidObject(account) {
   const ret = new MyClass();
 
-  ret.set("field1", uuid());
-  ret.set("field2", uuid());
-  ret.set("field3", uuid());
-  ret.set("field4", uuid());
-  ret.set("field5", uuid());
+  ret.set('field1', uuid());
+  ret.set('field2', uuid());
+  ret.set('field3', uuid());
+  ret.set('field4', uuid());
+  ret.set('field5', uuid());
 
   return ret;
 }
