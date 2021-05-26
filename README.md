@@ -12,7 +12,7 @@ $ mongodb-runner start
 ## Execution:
 - Clone this repo
 - $ npm i
-- Run `node ./tester.js` once to create the collections
+- Run `node ./tester.js create` once to create the collections
 - Run the test with version 3.10.0
     - $ node ./tester.js  
 - Save metrics

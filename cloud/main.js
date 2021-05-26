@@ -26,7 +26,13 @@ async function createWithAccount(userData, installData) {
 
   const newAccount = new Account();
 
-  const user = await newUser.save();
+  let user;
+  try {
+    user = await newUser.save();
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
 
   const userPointer = new Parse.User();
   userPointer.id = user.id;
