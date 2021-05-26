@@ -51,16 +51,22 @@ go()
   .then(() => setTimeout(() => process.exit(exit), 1000));
 
 async function go() {
+  const nAccounts = 300;
+  const nObjects = 400;
+
   console.time('accounts');
-  const accounts = await createAccounts(300);
+  const accounts = await createAccounts(nAccounts);
+  console.log(`Created ${nAccounts} accounts in parallel through cloud function (Installation + User + Account)`);
   console.timeEnd('accounts');
   try {
     console.time('objectsP');
-    await Promise.all(createObjectsP(300, accounts[0]));
+    await Promise.all(createObjectsP(nObjects, accounts[0]));
+    console.log(`Created ${nObjects} myObjects in parallel`);
     console.timeEnd('objectsP');
 
     console.time('objectsS');
-    await createObjectsS(300, accounts[0]);
+    await createObjectsS(nObjects, accounts[0]);
+    console.log(`Created ${nObjects} myObjects in sequence`);
     console.timeEnd('objectsS');
   } catch (err) {
     console.error(err);
