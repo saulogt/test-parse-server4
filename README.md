@@ -12,9 +12,17 @@ $ mongodb-runner start
 ## Execution:
 - Clone this repo
 - $ npm i
+- Run the test with version 3.10.0
+    - $ node ./tester.js  
+- Save metrics
+- npm i parse-server@4.5.0
+- Run the test again with version 4.5
+    - $ node ./tester.js
+- Compare results
 
 
-## parse-server@3.10.0
+## Results running with my MBP 16
+### parse-server@3.10.0
 
 ```
 Created 300 accounts in parallel through cloud function (Installation + User + Account)
@@ -25,7 +33,7 @@ Created 400 myObjects in sequence
 objectsS: 1.320s
 ```
 
-## parse-server@4.5.0
+### parse-server@4.5.0
 
 ```
 Created 300 accounts in parallel through cloud function (Installation + User + Account)
