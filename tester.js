@@ -1,6 +1,8 @@
 const Parse = require('parse/node');
 const server = require('./server');
 const uuid = require('uuid').v1;
+const { MongoClient } = require('mongodb');
+const config = require('./config');
 
 server.app.listen(1337, function() {
   console.log('parse-server-example running on port 1337.');
@@ -31,9 +33,9 @@ function createObjectsP(n, a) {
   const objcts = Array.apply(null, Array(n)).map(() => {
     const o = mkValidObject();
     o.set('account', a.user.account);
-    return o.save(null, { sessionToken: a.user.getSessionToken() });
+    return o;
   });
-  return objcts;
+  return objcts.map((o) => o.save(null, { sessionToken: a.user.getSessionToken() }));
 }
 
 /**
@@ -72,7 +74,7 @@ if (process.argv[2] === 'create') {
 
 async function go(n) {
   const nAccounts = 300;
-  const nObjects = 400;
+  const nObjects = 1500;
 
   console.time('accounts');
   const accounts = await createAccounts(nAccounts);
@@ -91,6 +93,46 @@ async function go(n) {
   } catch (err) {
     console.error(err);
   }
+
+  await clenupDb();
+}
+
+async function clenupDb() {
+  // Connection URI
+  // Create a new MongoClient
+  const client = new MongoClient(config.mongoUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  try {
+    await client.connect();
+    // Establish and verify connection
+    await Promise.all([
+      client
+        .db()
+        .collection('_User')
+        .remove({}),
+      client
+        .db()
+        .collection('_Installation')
+        .remove({}),
+      client
+        .db()
+        .collection('_Session')
+        .remove({}),
+      client
+        .db()
+        .collection('Account')
+        .remove({}),
+      client
+        .db()
+        .collection('MyClass')
+        .remove({}),
+    ]);
+  } catch (err) {
+    console.log(err);
+  }
+  await client.close();
 }
 
 async function create() {

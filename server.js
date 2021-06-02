@@ -1,12 +1,13 @@
 const express = require('express');
+const config = require('./config');
 const ParseServer = require('parse-server').ParseServer;
 const app = express();
 const appId = 'myAppId';
 const masterKey = 'myMasterKey'; // Keep this key secret!
-const serverURL = 'http://localhost:1337/parse';
+const serverURL = config.parseUrl; // 'http://localhost:1337/parse';
 
 const api = new ParseServer({
-  databaseURI: 'mongodb://localhost:27017/dev', // Connection string for your MongoDB database
+  databaseURI: config.mongoUri, //'mongodb://localhost:27017/dev', // Connection string for your MongoDB database
   cloud: './cloud/main.js', // Path to your Cloud Code
   appId,
   masterKey,

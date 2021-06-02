@@ -1,4 +1,3 @@
-const Parse = require('parse/node');
 const uuid = require('uuid').v1;
 const Account = Parse.Object.extend('Account');
 
